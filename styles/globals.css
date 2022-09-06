@@ -7,6 +7,9 @@
     .btn {
         @apply px-4 py-2 font-semibold text-white uppercase transition duration-200 ease-in-out bg-green-500 rounded-lg cursor-pointer hover:bg-slate-700 hover:text-white;
     }
+    .btnContainer{
+    @apply  container flex justify-around mt-4 mb-8;
+    }
 
     .inputcontainer {
         @apply h-6 mt-3 text-xs font-bold leading-8 text-gray-500 uppercase;

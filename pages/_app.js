@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import 'react-phone-number-input/style.css';
 import { AuthProvider } from '../contexts/Auth';
 import ErrorBoundary from '../components/ErrorBoundary';
 

@@ -13,3 +13,4 @@
 * [Multi-step Forms](https://github.com/QuickNuggets/multi-step-form)
 * [jwt decode](https://www.npmjs.com/package/jwt-decode)
 * [Custom Error Doc](https://nextjs.org/docs/advanced-features/custom-error-page)
+* [React Phone Number Input](https://www.npmjs.com/package/react-phone-number-input)

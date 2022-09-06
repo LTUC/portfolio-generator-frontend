@@ -1,75 +1,70 @@
-// import { UseContextProvider } from "../contexts/StepperContext";
-// import { useState } from "react";
+import { useState } from "react";
+import Stepper from "../components/Steppers/Stepper";
+import StepperControl from "../components/Steppers/StepperControl";
+import { UseContextProvider } from "../contexts/StepperContext";
 
-// import Link from 'next/link';
-// import Stepper from '../components/generator/Stepper';
-// import StepperControl from '../components/generator/StepperControl';
-// import UserInfo from '../components/generator/Forms/UserInfo';
-// import Experience from "../components/generator/Forms/Experience";
+import BasicInfo from '../components/Steppers/steps/BasicInfo';
+import Experience from "../components/Steppers/steps/Experience";
+import Final from "../components/Steppers/steps/Final";
 
+// import Account from "./components/steps/Account";
+// import Details from "./components/steps/Details";
+// import Payment from "./components/steps/Payment";
+// import Final from "./components/steps/Final";
 
-// import Payment from "../components/generator/steps/Payment";
-// import Final from "../components/generator/steps/Final";
+function App() {
+    const [currentStep, setCurrentStep] = useState(1);
 
+    const steps = [
+        "Basic Info",
+        "Experience",
+        "Education",
+        "Complete",
+    ];
 
-// export default function Gernerator() {
-//     const [currentStep, setCurrentStep] = useState(1);
-//     // 1. array of steps in my stepper
-//     const steps = [
-//         "User Info",
-//         "Experience",
-//         "Education",
-//         "Projects",
-//     ];
-//     // 2. which component to Display with differnet sections:
-//     const displayStep = (stepNumber) => {
-//         switch (stepNumber) {
-//             case 1:
-//                 return <UserInfo />;
-//             case 2:
-//                 return <Experience />;
-//             case 3:
-//                 return <Payment />;
-//             case 4:
-//                 return <Final />;
-//             default:
-//         }
+    const displayStep = (step) => {
+        switch (step) {
+            case 1:
+                return <BasicInfo />;
+            case 2:
+                return <Experience />;
+            case 3:
+                return <p>To be added</p>;
+            case 4:
+                return <Final />;
+            default:
+        }
+    };
 
-//     };
-//     const handleClick = (direction) => {
-//         let newStep = currentStep;
+    const handleClick = (direction) => {
+        let newStep = currentStep;
 
-//         direction === "next" ? newStep++ : newStep--;
-//         // check if steps are within bounds
-//         newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
-//     };
-//     return (
-//         <>
-//             <h1>Welcome to Portfolio Gernerator</h1>
-//             <p>
-//                 <Link href="/add/user-info">
-//                     <a > Get Started</a>
-//                 </Link>
-//             </p>
-//             <div className="pb-2 mx-auto bg-white shadow-xl rounded-2xl md:w-1/2">
-//                 {/* Stepper */}
-//                 <div className="container mt-5 horizontal ">
-//                     <Stepper steps={steps} currentStep={currentStep} />
+        direction === "next" ? newStep++ : newStep--;
+        // check if steps are within bounds
+        newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
+    };
 
-//                     <div className="p-10 my-10 ">
-//                         <UseContextProvider>{displayStep(currentStep)}</UseContextProvider>
-//                     </div>
-//                 </div>
+    return (
+        <div className="pb-2 mx-auto bg-white shadow-xl rounded-2xl md:w-1/2">
+            {/* Stepper */}
+            <div className="container mt-5 horizontal ">
+                <Stepper steps={steps} currentStep={currentStep} />
 
-//                 {/* navigation button */}
-//                 {currentStep !== steps.length && (
-//                     <StepperControl
-//                         handleClick={handleClick}
-//                         currentStep={currentStep}
-//                         steps={steps}
-//                     />
-//                 )}
-//             </div>
-//         </>
-//     )
-// }
+                <div className="p-10 my-10 ">
+                    <UseContextProvider>{displayStep(currentStep)}</UseContextProvider>
+                </div>
+            </div>
+
+            {/* navigation button */}
+            {currentStep !== steps.length && (
+                <StepperControl
+                    handleClick={handleClick}
+                    currentStep={currentStep}
+                    steps={steps}
+                />
+            )}
+        </div>
+    );
+}
+
+export default App;
