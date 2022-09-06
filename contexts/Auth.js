@@ -14,11 +14,6 @@ export function useAuth() {
     return Auth;
 }
 
-// add my logic
-// check the local storage in "AuthTokens"
-// if it is empty, then the user is not logged in => tokens = null
-// else: tokens = tokens stored in the ls
-
 export function AuthProvider({ children }) {
     console.log("I am inside Auth.js");
     let lsData = null
@@ -28,7 +23,7 @@ export function AuthProvider({ children }) {
     }
 
     const [tokens, setTokens] = useState(() =>
-       lsData ? JSON.parse(lsData) : null
+        lsData ? JSON.parse(lsData) : null
     );
     const [userInfo, setUserInfo] = useState(null);
 
@@ -67,46 +62,59 @@ export function AuthProvider({ children }) {
         }
     }
 
-    // async function refreshToken() {
-    //     const body = {
-    //         refresh: tokens.refresh
-    //     }
-    //     const res = await axios.post(refreshUrl, body);
-    //     if (res.status === 200) {
-    //         const newTokens = {
-    //             access: res.data,
-    //             refresh: tokens.refresh
-    //         }
-    //         setTokens(newTokens)
-    //         // localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
-    //     } else {
-    //         logout();
-    //     }
-    // }
+    async function refreshToken() {
+        const body = {
+            refresh: tokens.refresh
+        }
+        const res = await axios.post(refreshUrl, body);
+        if (res.status === 200) {
+            const newTokens = {
+                access: res.data,
+                refresh: tokens.refresh
+            }
+            setTokens(newTokens);
+            localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
+        } else {
+            logout();
+        }
+    }
 
-    // function logout() {
-    //     setTokens(null);
-    //     setUserInfo(null);
-    //     localStorage.removeItem("AuthTokens")
-    // }
+    function isAuth() {
+        try {
+            if (tokens?.access && tokens?.refresh) {
+                const access = jwt_decode(tokens.access);
+                const refresh = jwt_decode(tokens.refresh);
+                const now = Math.ceil(Date.now() / 1000);
+
+                if (access?.exp > now) return true
+                if (access?.exp < now && refresh?.exp > now) {
+                    refreshToken();
+                    return true;
+                }
+                return false;
+            }
+        } catch (error) {
+            console.log(`Error in authenticating the user${error}`);
+        }
+    }
+
+    function logout() {
+        setTokens(null);
+        setUserInfo(null);
+        localStorage.removeItem("AuthTokens")
+    }
 
     const globalState = {
         tokens,
         signup,
         login,
-        // logout,
-        // refreshToken,
+        logout,
+        refreshToken,
+        isAuth,
     }
-    // function to check if access token has expired
-
     return (
         <AuthContext.Provider value={globalState}>
             {children}
         </AuthContext.Provider>
     )
 }
-
-// a function to sign up
-// a function to login
-// a function to refresh the token
-// tokens
