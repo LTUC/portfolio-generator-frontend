@@ -15,11 +15,10 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-    console.log("I am inside Auth.js");
+
     let lsData = null
     if (typeof window !== 'undefined') {
         lsData = localStorage.getItem("AuthTokens");
-        console.log("inside the default value", lsData)
     }
 
     const [tokens, setTokens] = useState(() =>
@@ -31,7 +30,6 @@ export function AuthProvider({ children }) {
         try {
 
             const res = await axios.post(createUserUrl, userInput);
-            console.log(res)
             if (res.status === 400) {
                 console.log(`${res.status} bad request`)
             }
@@ -50,10 +48,7 @@ export function AuthProvider({ children }) {
             const res = await axios.post(loginURL, { email, password });
             if (res.status === 200) {
                 setTokens(res.data);
-                console.log("token after login", tokens)
                 setUserInfo(jwt_decode(res.data.access));
-                // save the tokens to the ls:
-                console.log("data from login", res.data)
                 localStorage.setItem("AuthTokens", JSON.stringify(res.data))
             }
         }
@@ -69,11 +64,13 @@ export function AuthProvider({ children }) {
         const res = await axios.post(refreshUrl, body);
         if (res.status === 200) {
             const newTokens = {
-                access: res.data,
+                access: res.data.access,
                 refresh: tokens.refresh
             }
-            setTokens(newTokens);
-            localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
+            console.log("refresh token res", res.data);
+            console.log(55555555555, newTokeres.data.accessns);
+            setTokens(res.data.access);
+            localStorage.setItem("AuthTokens", JSON.stringify(res.data.access));
         } else {
             logout();
         }
@@ -81,20 +78,27 @@ export function AuthProvider({ children }) {
 
     function isAuth() {
         try {
-            if (tokens?.access && tokens?.refresh) {
-                const access = jwt_decode(tokens.access);
-                const refresh = jwt_decode(tokens.refresh);
+            console.log(4444444, tokens.access, tokens.refresh)
+            if (tokens.access && tokens.refresh) {
+                const access = jwt_decode(tokens?.access);
+                const refresh = jwt_decode(tokens?.refresh);
                 const now = Math.ceil(Date.now() / 1000);
-
-                if (access?.exp > now) return true
-                if (access?.exp < now && refresh?.exp > now) {
+                console.log(access?.user_id);
+                setUserInfo(access?.user_id);
+                if (access.exp > now) {
+                    console.log("Access token hasn't expired")
+                    return true;
+                }
+                if (access?.exp < now && refresh.exp > now) {
                     refreshToken();
+                    console.log("Need to refresh token");
                     return true;
                 }
                 return false;
             }
         } catch (error) {
             console.log(`Error in authenticating the user${error}`);
+            return false;
         }
     }
 
@@ -111,6 +115,7 @@ export function AuthProvider({ children }) {
         logout,
         refreshToken,
         isAuth,
+        userInfo,
     }
     return (
         <AuthContext.Provider value={globalState}>

@@ -7,10 +7,7 @@ import BasicInfo from '../components/Steppers/steps/BasicInfo';
 import Experience from "../components/Steppers/steps/Experience";
 import Final from "../components/Steppers/steps/Final";
 
-// import Account from "./components/steps/Account";
-// import Details from "./components/steps/Details";
-// import Payment from "./components/steps/Payment";
-// import Final from "./components/steps/Final";
+
 
 function App() {
     const [currentStep, setCurrentStep] = useState(1);
