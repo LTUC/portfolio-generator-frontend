@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer components {
+    .btn {
+        @apply px-4 py-2 font-semibold text-white uppercase transition duration-200 ease-in-out bg-green-500 rounded-lg cursor-pointer hover:bg-slate-700 hover:text-white;
+    }
+
+    .inputcontainer {
+        @apply h-6 mt-3 text-xs font-bold leading-8 text-gray-500 uppercase;
+    }
+}
+
+@layer base {
+    p {
+        @apply text-gray-300
+    }
+}
