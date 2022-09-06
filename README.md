@@ -12,3 +12,4 @@
 * [Landing Page](https://github.com/themesberg/tailwind-landing-page)
 * [Multi-step Forms](https://github.com/QuickNuggets/multi-step-form)
 * [jwt decode](https://www.npmjs.com/package/jwt-decode)
+* [Custom Error Doc](https://nextjs.org/docs/advanced-features/custom-error-page)

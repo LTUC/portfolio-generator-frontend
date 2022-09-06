@@ -1,11 +1,12 @@
 import Image from 'next/image';
-
+import Link from 'next/link';
 
 export default function Header() {
+
     return (
         <>
             <header>
-                <nav className= "bg-gray-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+                <nav className="bg-gray-50 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
                     <div className="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto">
                         <a href="https://github.com/LTUC" className="flex items-center">
                             <Image
@@ -18,9 +19,19 @@ export default function Header() {
                             />
                         </a>
                         <div className="flex items-center lg:order-2">
-                            <span className="self-center mr-3 font-semibold text-l whitespace-nowrap dark:text-white">Register</span>
+                            <span className="self-center mr-3 font-semibold text-l whitespace-nowrap dark:text-white">
 
-                            <button href="#" className="btn">Log In</button>
+                                <Link href="/signup">
+                                    Register
+                                </Link>
+
+                            </span>
+
+                            <button className="btn">
+                                <Link href="/login">
+                                    Log In
+                                </Link>
+                            </button>
                         </div>
 
                     </div>
