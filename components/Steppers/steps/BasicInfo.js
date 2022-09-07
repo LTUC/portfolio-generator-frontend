@@ -1,23 +1,50 @@
-import { useStepperContext } from "../../../contexts/StepperContext";
 import PhoneInput from 'react-phone-number-input';
-import Layout from "../InputLayout";
 import axios from "axios";
 
+import { useStepperContext } from "../../../contexts/StepperContext";
+import { useAuth } from '../../../contexts/Auth';
+
+import Layout from "../InputLayout";
+
+
 export default function UserInfo() {
+
     const { userData, setUserData } = useStepperContext();
+    const { isAuth, tokens, userInfo, refreshToken } = useAuth();
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUserData({ ...userData, [name]: value });
     };
+
     const saveUserInfo = async (e) => {
         e.preventDefault();
-        const userInfo = {
+        const userInput = {
             first_name: e.target.firstname.value,
             last_name: e.target.lastname.value,
             phone: e.target.phone.value,
             portfolio_email: e.target.email.value,
             about: e.target.about.value,
             theme: e.target.theme.value,
+        }
+        console.log(userInfo);
+        let isUserAuthenticated = isAuth();
+        if (!isUserAuthenticated) {
+            console.log("Token has Expired, loggin again");
+            await refreshToken();
+            // return;
+        }
+        console.log("token sent to patch req", tokens.access);
+        let config = {
+            headers: {
+                'Authorization': 'Bearer ' + tokens.access
+            }
+        }
+        console.log({ config })
+        let res = await axios.patch(`https://portfolio-generator-401d09.herokuapp.com/api/v1/user/${userInfo}/`, userInput, config);
+        console.log(res.data);
+        if (res.status === 200) {
+            alert("Data has been saved successfully!")
         }
     }
     return (

@@ -14,29 +14,24 @@ export function useAuth() {
     return Auth;
 }
 
-// add my logic
-// check the local storage in "AuthTokens"
-// if it is empty, then the user is not logged in => tokens = null
-// else: tokens = tokens stored in the ls
-
 export function AuthProvider({ children }) {
-    console.log("I am inside Auth.js");
+
     let lsData = null
     if (typeof window !== 'undefined') {
         lsData = localStorage.getItem("AuthTokens");
-        console.log("inside the default value", lsData)
     }
 
     const [tokens, setTokens] = useState(() =>
-       lsData ? JSON.parse(lsData) : null
+        lsData ? JSON.parse(lsData) : null
     );
-    const [userInfo, setUserInfo] = useState(null);
+    const [userInfo, setUserInfo] = useState(() => {
+        return lsData ? jwt_decode(lsData).user_id : null;
+    });
 
     async function signup(userInput) {
         try {
 
             const res = await axios.post(createUserUrl, userInput);
-            console.log(res)
             if (res.status === 400) {
                 console.log(`${res.status} bad request`)
             }
@@ -54,11 +49,8 @@ export function AuthProvider({ children }) {
         try {
             const res = await axios.post(loginURL, { email, password });
             if (res.status === 200) {
-                setTokens(res.data);
-                console.log("token after login", tokens)
-                setUserInfo(jwt_decode(res.data.access));
-                // save the tokens to the ls:
-                console.log("data from login", res.data)
+                setTokens(res.data); // access + refresh
+                setUserInfo(jwt_decode(res.data.access)); // user_id 
                 localStorage.setItem("AuthTokens", JSON.stringify(res.data))
             }
         }
@@ -67,46 +59,70 @@ export function AuthProvider({ children }) {
         }
     }
 
-    // async function refreshToken() {
-    //     const body = {
-    //         refresh: tokens.refresh
-    //     }
-    //     const res = await axios.post(refreshUrl, body);
-    //     if (res.status === 200) {
-    //         const newTokens = {
-    //             access: res.data,
-    //             refresh: tokens.refresh
-    //         }
-    //         setTokens(newTokens)
-    //         // localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
-    //     } else {
-    //         logout();
-    //     }
-    // }
+    async function refreshToken() {
+        const body = {
+            refresh: tokens.refresh
+        }
+        const res = await axios.post(refreshUrl, body);
+        if (res.status === 200) {
+            const newTokens = {
+                access: res.data.access,
+                refresh: tokens.refresh
+            }
+            console.log("refresh token res", res.data); // access
+            console.log(55555555555, newTokens);
+            setTokens(newTokens);
+            // setUserInfo(jwt_decode(newTokens.access));
+            localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
+        } else {
+            logout();
+        }
+    }
 
-    // function logout() {
-    //     setTokens(null);
-    //     setUserInfo(null);
-    //     localStorage.removeItem("AuthTokens")
-    // }
+    function isAuth() {
+        try {
+            console.log(4444444, tokens.access, tokens.refresh)
+            if (tokens.access && tokens.refresh) {
+                const access = jwt_decode(tokens?.access);
+                const refresh = jwt_decode(tokens?.refresh);
+                const now = Math.ceil(Date.now() / 1000);
+                console.log(access?.user_id);
+                setUserInfo(access?.user_id);
+                if (access.exp > now) {
+                    console.log("Access token hasn't expired")
+                    return true;
+                }
+                if (access?.exp < now && refresh.exp > now) {
+                    // refreshToken();
+                    console.log("Need to refresh token");
+                    return false;
+                }
+                return false;
+            }
+        } catch (error) {
+            console.log(`Error in authenticating the user${error}`);
+            return false;
+        }
+    }
+
+    function logout() {
+        setTokens(null);
+        setUserInfo(null);
+        localStorage.removeItem("AuthTokens")
+    }
 
     const globalState = {
         tokens,
         signup,
         login,
-        // logout,
-        // refreshToken,
+        logout,
+        refreshToken,
+        isAuth,
+        userInfo,
     }
-    // function to check if access token has expired
-
     return (
         <AuthContext.Provider value={globalState}>
             {children}
         </AuthContext.Provider>
     )
 }
-
-// a function to sign up
-// a function to login
-// a function to refresh the token
-// tokens

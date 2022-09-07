@@ -5,6 +5,7 @@ import Layout from "../InputLayout";
 export default function Experience() {
     const [inputFields, setInputFields] = useState([
         {
+            id: '',
             jobtitle: '',
             company: '',
             startdate: '',
@@ -12,7 +13,9 @@ export default function Experience() {
             description: '',
         }
     ])
-
+    // create a state as array of objects where object is one experience
+    // when I click add more, I will expand the old experience and add another object to it
+    // to render the form, loop through the state and for each object create a form
     const handleFormChange = (index, event) => {
         let data = [...inputFields];
         data[index][event.target.name] = event.target.value;
