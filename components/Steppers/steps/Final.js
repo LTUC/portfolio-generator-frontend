@@ -41,11 +41,11 @@ export default function Final() {
                 </div>
                 <Link href={`user/${id}`}> See Result</Link>
 
-                <a className="mt-10" href="/user/dashboard">
-                    <button className="h-10 px-5 text-green-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:shadow-outline hover:bg-green-500 hover:text-green-100">
-                        Close
-                    </button>
-                </a>
+
+                <button className="h-10 px-5 text-green-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:shadow-outline hover:bg-green-500 hover:text-green-100">
+                    Close
+                </button>
+
             </div>
         </div>
     );
