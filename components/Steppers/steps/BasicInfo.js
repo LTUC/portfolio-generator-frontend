@@ -31,9 +31,10 @@ export default function UserInfo() {
         let isUserAuthenticated = isAuth();
         if (!isUserAuthenticated) {
             console.log("Token has Expired, loggin again");
-            refreshToken()
+            await refreshToken();
             // return;
         }
+        console.log("token sent to patch req", tokens.access);
         let config = {
             headers: {
                 'Authorization': 'Bearer ' + tokens.access

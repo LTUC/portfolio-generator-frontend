@@ -24,7 +24,9 @@ export function AuthProvider({ children }) {
     const [tokens, setTokens] = useState(() =>
         lsData ? JSON.parse(lsData) : null
     );
-    const [userInfo, setUserInfo] = useState(null);
+    const [userInfo, setUserInfo] = useState(() => {
+        return lsData ? jwt_decode(lsData).user_id : null;
+    });
 
     async function signup(userInput) {
         try {
@@ -47,8 +49,8 @@ export function AuthProvider({ children }) {
         try {
             const res = await axios.post(loginURL, { email, password });
             if (res.status === 200) {
-                setTokens(res.data);
-                setUserInfo(jwt_decode(res.data.access));
+                setTokens(res.data); // access + refresh
+                setUserInfo(jwt_decode(res.data.access)); // user_id 
                 localStorage.setItem("AuthTokens", JSON.stringify(res.data))
             }
         }
@@ -67,10 +69,11 @@ export function AuthProvider({ children }) {
                 access: res.data.access,
                 refresh: tokens.refresh
             }
-            console.log("refresh token res", res.data);
-            // console.log(55555555555, newTokeres.data.accesss);
-            setTokens(res.data.access);
-            localStorage.setItem("AuthTokens", JSON.stringify(res.data.access));
+            console.log("refresh token res", res.data); // access
+            console.log(55555555555, newTokens);
+            setTokens(newTokens);
+            // setUserInfo(jwt_decode(newTokens.access));
+            localStorage.setItem("AuthTokens", JSON.stringify(newTokens));
         } else {
             logout();
         }
@@ -90,9 +93,9 @@ export function AuthProvider({ children }) {
                     return true;
                 }
                 if (access?.exp < now && refresh.exp > now) {
-                    refreshToken();
+                    // refreshToken();
                     console.log("Need to refresh token");
-                    return true;
+                    return false;
                 }
                 return false;
             }
